@@ -6,6 +6,7 @@ import {
   programmingLanguages,
   type ProgrammingLanguage,
 } from './lib/codeExamples'
+import { usePwaInstall } from './hooks/usePwaInstall'
 
 type StudyMode = 'learn' | 'lab' | 'practice'
 
@@ -48,6 +49,7 @@ const storageKey = 'physics-in-code:completed-exercises'
 const languageStorageKey = 'physics-in-code:programming-language'
 
 export function App() {
+  const { canInstall, install, isOnline } = usePwaInstall()
   const [activeMode, setActiveMode] = useState<StudyMode>('lab')
   const [isNavigationOpen, setIsNavigationOpen] = useState(false)
   const [programmingLanguage, setProgrammingLanguage] = useState<ProgrammingLanguage>(() => {
@@ -124,7 +126,7 @@ export function App() {
         <a className="app-brand" href="#workspace" aria-label="Física en Código, inicio">
           <span className="app-brand__symbol" aria-hidden="true">ƒ</span>
           <span className="app-brand__name">Física <b>en Código</b></span>
-          <span className="prototype-tag">α 0.3</span>
+          <span className="prototype-tag">α 0.4</span>
         </a>
 
         <div className="header-context" aria-label="Contexto actual">
@@ -133,10 +135,23 @@ export function App() {
           <span>{activeModeItem.label}</span>
         </div>
 
-        <div className="header-progress" aria-label={`Progreso de práctica registrado: ${lessonProgress}%`}>
-          <span>{lessonProgress}%</span>
-          <div className="header-progress__track">
-            <div style={{ width: `${lessonProgress}%` }} />
+        <div className="header-actions">
+          {!isOnline && (
+            <span className="offline-indicator" role="status">
+              Sin conexión
+            </span>
+          )}
+          {canInstall && (
+            <button className="install-button" type="button" onClick={() => void install()}>
+              <span aria-hidden="true">↓</span>
+              Instalar app
+            </button>
+          )}
+          <div className="header-progress" aria-label={`Progreso de práctica registrado: ${lessonProgress}%`}>
+            <span>{lessonProgress}%</span>
+            <div className="header-progress__track">
+              <div style={{ width: `${lessonProgress}%` }} />
+            </div>
           </div>
         </div>
       </header>

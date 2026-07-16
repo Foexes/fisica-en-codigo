@@ -6,7 +6,7 @@ académica con conceptos de programación.
 La interfaz y el contenido están escritos en español. La estructura interna,
 los componentes, tipos, funciones y variables usan nomenclatura en inglés.
 
-## Incluido en el prototipo 0.3
+## Incluido en el prototipo 0.4
 
 - Workspace de estudio con navegación persistente.
 - Tres modos: **Entender**, **Experimentar** y **Practicar**.
@@ -18,6 +18,7 @@ los componentes, tipos, funciones y variables usan nomenclatura en inglés.
 - Tres problemas con datos, pistas, correcciones y progreso persistente.
 - Atajos de teclado `1`, `2` y `3` para cambiar de modo.
 - Diseño adaptable a escritorio y móvil.
+- PWA instalable con funcionamiento sin conexión y actualizaciones automáticas.
 
 La preferencia de lenguaje se conserva localmente y se comparte entre el modo
 **Entender** y la pestaña de código del laboratorio.
@@ -42,11 +43,26 @@ npm run preview
 
 La compilación de producción se genera en `dist/`.
 
+## Publicar con Cloudflare Pages
+
+El repositorio puede seguir siendo privado aunque la web sea pública.
+
+1. En Cloudflare, abre **Workers & Pages** y crea una aplicación de Pages.
+2. Conecta GitHub y autoriza el repositorio `Foexes/fisica-en-codigo`.
+3. Selecciona la rama de producción `main`.
+4. Usa `npm run build` como comando de compilación y `dist` como directorio de salida.
+5. Publica. Los siguientes `git push` desplegarán una versión nueva automáticamente.
+
+La primera visita necesita conexión. Después, el service worker conserva la interfaz
+y sus recursos para poder abrir la app sin conexión. Cuando el navegador lo permita,
+el botón **Instalar app** aparecerá en la cabecera.
+
 ## Estructura
 
 ```text
 src/
 ├─ components/   Componentes visuales e interactivos
+├─ hooks/        Integración del navegador y la instalación PWA
 ├─ lib/          Lógica física independiente de React
 ├─ App.tsx       Composición de la primera lección
 ├─ main.tsx      Punto de entrada

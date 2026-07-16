@@ -167,10 +167,59 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-right: 24px;
   color: #a7b5ad;
   font-family: 'DM Mono', monospace;
   font-size: 10px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 24px;
+}
+
+.install-button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(100, 229, 168, 0.28);
+  border-radius: 6px;
+  color: #b9f2d5;
+  background: rgba(53, 186, 126, 0.1);
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.install-button:hover {
+  border-color: rgba(100, 229, 168, 0.48);
+  background: rgba(53, 186, 126, 0.18);
+}
+
+.install-button > span {
+  color: var(--accent-bright);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+}
+
+.offline-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #e9bd78;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.offline-indicator::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  content: '';
 }
 
 .header-progress__track {
@@ -1916,6 +1965,11 @@ button:disabled {
   }
 
   .header-progress {
+    padding-right: 0;
+  }
+
+  .header-actions {
+    gap: 8px;
     padding-right: 14px;
   }
 
@@ -2059,6 +2113,25 @@ button:disabled {
 }
 
 @media (max-width: 560px) {
+  .install-button {
+    padding: 0 8px;
+  }
+
+  .install-button > span {
+    display: none;
+  }
+
+  .offline-indicator {
+    position: absolute;
+    right: 10px;
+    bottom: -24px;
+    padding: 4px 7px;
+    border: 1px solid #e1b56f;
+    border-radius: 5px;
+    color: #76501b;
+    background: #fff3dc;
+  }
+
   .app-brand__name,
   .header-progress__track {
     display: none;
