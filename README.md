@@ -43,15 +43,18 @@ npm run preview
 
 La compilación de producción se genera en `dist/`.
 
-## Publicar con Cloudflare Pages
+## Publicar con GitHub Pages
 
-El repositorio puede seguir siendo privado aunque la web sea pública.
+Cada `push` a `main` activa el workflow de despliegue incluido en el repositorio.
 
-1. En Cloudflare, abre **Workers & Pages** y crea una aplicación de Pages.
-2. Conecta GitHub y autoriza el repositorio `Foexes/fisica-en-codigo`.
-3. Selecciona la rama de producción `main`.
-4. Usa `npm run build` como comando de compilación y `dist` como directorio de salida.
-5. Publica. Los siguientes `git push` desplegarán una versión nueva automáticamente.
+Para el primer despliegue, abre **Settings → Pages** en GitHub y selecciona
+**GitHub Actions** como fuente. La web quedará disponible en:
+
+`https://foexes.github.io/fisica-en-codigo/`
+
+El workflow usa el modo `pages`, configurado en `.env.pages`, para construir la
+app bajo `/fisica-en-codigo/`. El desarrollo local continúa funcionando desde `/`
+sin configuración adicional.
 
 La primera visita necesita conexión. Después, el service worker conserva la interfaz
 y sus recursos para poder abrir la app sin conexión. Cuando el navegador lo permita,
