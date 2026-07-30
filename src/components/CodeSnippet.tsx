@@ -8,6 +8,7 @@ interface CodeSnippetProps {
   code: string
   language: ProgrammingLanguage
   onLanguageChange: (language: ProgrammingLanguage) => void
+  fileName?: string
   compact?: boolean
 }
 
@@ -15,6 +16,7 @@ export function CodeSnippet({
   code,
   language,
   onLanguageChange,
+  fileName,
   compact = false,
 }: CodeSnippetProps) {
   const definition = getLanguageDefinition(language)
@@ -23,7 +25,7 @@ export function CodeSnippet({
   return (
     <div className={`code-snippet ${compact ? 'code-snippet--compact' : ''}`}>
       <div className="code-window__header">
-        <span>{definition.fileName}</span>
+        <span>{fileName ?? definition.fileName}</span>
         <label className="language-selector">
           <span className="sr-only">Lenguaje de programación</span>
           <select

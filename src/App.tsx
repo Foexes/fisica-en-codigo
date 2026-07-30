@@ -2,10 +2,23 @@ import { useEffect, useState } from 'react'
 import { LabWorkspace } from './components/LabWorkspace'
 import { LearnWorkspace } from './components/LearnWorkspace'
 import { ExercisePanel } from './components/ExercisePanel'
+import { VectorLabWorkspace } from './components/VectorLabWorkspace'
+import { motionConceptSteps, vectorConceptSteps } from './data/concepts'
+import { exerciseSets } from './data/exercises'
 import {
+  getConceptCode,
+  getExampleFileName,
+  getVectorConceptCode,
   programmingLanguages,
+  type ConceptCodeId,
   type ProgrammingLanguage,
+  type VectorConceptCodeId,
 } from './lib/codeExamples'
+import {
+  courseModules,
+  getCourseModule,
+  type CourseModuleId,
+} from './lib/course'
 import { usePwaInstall } from './hooks/usePwaInstall'
 
 type StudyMode = 'learn' | 'lab' | 'practice'
@@ -38,18 +51,32 @@ const studyModes: StudyModeItem[] = [
   },
 ]
 
-const modules = [
-  { id: 'motion', number: '01', name: 'Movimiento', available: true },
-  { id: 'vectors', number: '02', name: 'Vectores', available: false },
-  { id: 'functions', number: '03', name: 'Funciones', available: false },
-  { id: 'forces', number: '04', name: 'Fuerzas', available: false },
-]
+type ModuleProgress = Partial<Record<CourseModuleId, string[]>>
 
-const storageKey = 'physics-in-code:completed-exercises'
+const legacyProgressStorageKey = 'physics-in-code:completed-exercises'
+const moduleProgressStorageKey = 'physics-in-code:module-progress'
 const languageStorageKey = 'physics-in-code:programming-language'
+
+function readModuleProgress(): ModuleProgress {
+  try {
+    const storedProgress = localStorage.getItem(moduleProgressStorageKey)
+    if (storedProgress) return JSON.parse(storedProgress) as ModuleProgress
+
+    const legacyProgress = localStorage.getItem(legacyProgressStorageKey)
+    if (!legacyProgress) return {}
+
+    const completedMotionExercises = JSON.parse(legacyProgress) as unknown
+    return Array.isArray(completedMotionExercises)
+      ? { motion: completedMotionExercises.filter((value): value is string => typeof value === 'string') }
+      : {}
+  } catch {
+    return {}
+  }
+}
 
 export function App() {
   const { canInstall, install, isOnline } = usePwaInstall()
+  const [activeModuleId, setActiveModuleId] = useState<CourseModuleId>('motion')
   const [activeMode, setActiveMode] = useState<StudyMode>('lab')
   const [isNavigationOpen, setIsNavigationOpen] = useState(false)
   const [programmingLanguage, setProgrammingLanguage] = useState<ProgrammingLanguage>(() => {
@@ -61,17 +88,19 @@ export function App() {
       return 'luau'
     }
   })
-  const [completedExerciseIds, setCompletedExerciseIds] = useState<string[]>(() => {
-    try {
-      const storedValue = localStorage.getItem(storageKey)
-      return storedValue ? (JSON.parse(storedValue) as string[]) : []
-    } catch {
-      return []
-    }
-  })
+  const [moduleProgress, setModuleProgress] = useState<ModuleProgress>(readModuleProgress)
 
+  const activeModule = getCourseModule(activeModuleId)
   const activeModeItem = studyModes.find((mode) => mode.id === activeMode) ?? studyModes[0]
-  const lessonProgress = Math.round((completedExerciseIds.length / 3) * 100)
+  const activeExerciseSet = exerciseSets[activeModuleId] ?? exerciseSets.motion
+  const completedExerciseIds = moduleProgress[activeModuleId] ?? []
+  const completedExerciseCount =
+    activeExerciseSet?.exercises.filter((exercise) => completedExerciseIds.includes(exercise.id)).length ?? 0
+  const lessonProgress = activeExerciseSet
+    ? Math.round((completedExerciseCount / activeExerciseSet.exercises.length) * 100)
+    : 0
+  const activeConceptSteps =
+    activeModuleId === 'vectors' ? vectorConceptSteps : motionConceptSteps
 
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
@@ -95,18 +124,46 @@ export function App() {
     }
   }, [programmingLanguage])
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(moduleProgressStorageKey, JSON.stringify(moduleProgress))
+    } catch {
+      // Progress remains available for the current session.
+    }
+  }, [moduleProgress])
+
   const completeExercise = (exerciseId: string) => {
-    setCompletedExerciseIds((currentIds) => {
-      if (currentIds.includes(exerciseId)) return currentIds
-      const nextIds = [...currentIds, exerciseId]
-      localStorage.setItem(storageKey, JSON.stringify(nextIds))
-      return nextIds
+    setModuleProgress((currentProgress) => {
+      const currentIds = currentProgress[activeModuleId] ?? []
+      if (currentIds.includes(exerciseId)) return currentProgress
+
+      return {
+        ...currentProgress,
+        [activeModuleId]: [...currentIds, exerciseId],
+      }
     })
   }
 
   const selectMode = (mode: StudyMode) => {
     setActiveMode(mode)
     setIsNavigationOpen(false)
+  }
+
+  const selectModule = (moduleId: CourseModuleId) => {
+    const selectedModule = getCourseModule(moduleId)
+    if (!selectedModule.available) return
+
+    setActiveModuleId(moduleId)
+    setActiveMode('learn')
+    setIsNavigationOpen(false)
+  }
+
+  const getActiveConceptCode = (codeId: string, language: ProgrammingLanguage) => {
+    if (activeModuleId === 'vectors') {
+      return getVectorConceptCode(codeId as VectorConceptCodeId, language)
+    }
+
+    return getConceptCode(codeId as ConceptCodeId, language)
   }
 
   return (
@@ -126,11 +183,11 @@ export function App() {
         <a className="app-brand" href="#workspace" aria-label="Física en Código, inicio">
           <span className="app-brand__symbol" aria-hidden="true">ƒ</span>
           <span className="app-brand__name">Física <b>en Código</b></span>
-          <span className="prototype-tag">α 0.4</span>
+          <span className="prototype-tag">α 0.5</span>
         </a>
 
         <div className="header-context" aria-label="Contexto actual">
-          <span className="header-context__path">Fundamentos / Movimiento</span>
+          <span className="header-context__path">Fundamentos / {activeModule.name}</span>
           <span className="header-context__separator" aria-hidden="true" />
           <span>{activeModeItem.label}</span>
         </div>
@@ -169,17 +226,25 @@ export function App() {
         <nav aria-label="Módulos">
           <span className="navigation-section-label">Módulos</span>
           <ol className="module-navigation">
-            {modules.map((module) => (
-              <li key={module.id}>
+            {courseModules.map((courseModule) => (
+              <li key={courseModule.id}>
                 <button
-                  className={`module-navigation__item ${module.available ? 'module-navigation__item--active' : ''}`}
+                  className={[
+                    'module-navigation__item',
+                    courseModule.available ? 'module-navigation__item--available' : '',
+                    courseModule.id === activeModuleId ? 'module-navigation__item--active' : '',
+                  ].filter(Boolean).join(' ')}
                   type="button"
-                  disabled={!module.available}
+                  disabled={!courseModule.available}
+                  aria-current={courseModule.id === activeModuleId ? 'page' : undefined}
+                  onClick={() => selectModule(courseModule.id)}
                 >
-                  <span>{module.number}</span>
-                  <strong>{module.name}</strong>
-                  {module.available ? (
+                  <span>{courseModule.number}</span>
+                  <strong>{courseModule.name}</strong>
+                  {courseModule.id === activeModuleId ? (
                     <i aria-label="Módulo activo" />
+                  ) : courseModule.available ? (
+                    <small aria-label="Abrir módulo">→</small>
                   ) : (
                     <small aria-label="Próximamente">—</small>
                   )}
@@ -190,7 +255,7 @@ export function App() {
         </nav>
 
         <nav className="mode-navigation" aria-label="Modos de estudio">
-          <span className="navigation-section-label">Lección 01</span>
+          <span className="navigation-section-label">Lección {activeModule.number}</span>
           {studyModes.map((mode) => (
             <button
               key={mode.id}
@@ -226,8 +291,8 @@ export function App() {
       <main id="workspace" className="study-workspace">
         <div className="workspace-heading">
           <div>
-            <span className="interface-label">Movimiento · Lección 01</span>
-            <h1>Movimiento en una dimensión</h1>
+            <span className="interface-label">{activeModule.lessonLabel}</span>
+            <h1>{activeModule.title}</h1>
           </div>
           <p>{activeModeItem.description}</p>
         </div>
@@ -247,19 +312,41 @@ export function App() {
 
         {activeMode === 'learn' && (
           <LearnWorkspace
+            key={activeModuleId}
+            steps={activeConceptSteps}
+            getCode={getActiveConceptCode}
+            getFileName={(language) =>
+              getExampleFileName(activeModuleId === 'vectors' ? 'vectors' : 'motion', language)
+            }
+            ariaLabel={`Conceptos fundamentales de ${activeModule.name.toLowerCase()}`}
+            translation={
+              activeModuleId === 'vectors'
+                ? 'El código utiliza las mismas componentes, magnitud y dirección que aparecen en la fórmula.'
+                : 'El código conserva exactamente la misma relación entre estado, cambio y tiempo.'
+            }
             programmingLanguage={programmingLanguage}
             onLanguageChange={setProgrammingLanguage}
             onOpenLab={() => selectMode('lab')}
           />
         )}
-        {activeMode === 'lab' && (
+        {activeMode === 'lab' && activeModuleId === 'motion' && (
           <LabWorkspace
             programmingLanguage={programmingLanguage}
             onLanguageChange={setProgrammingLanguage}
           />
         )}
-        {activeMode === 'practice' && (
+        {activeMode === 'lab' && activeModuleId === 'vectors' && (
+          <VectorLabWorkspace
+            programmingLanguage={programmingLanguage}
+            onLanguageChange={setProgrammingLanguage}
+          />
+        )}
+        {activeMode === 'practice' && activeExerciseSet && (
           <ExercisePanel
+            key={activeModuleId}
+            title={activeExerciseSet.title}
+            description={activeExerciseSet.description}
+            exercises={activeExerciseSet.exercises}
             completedIds={completedExerciseIds}
             onComplete={completeExercise}
           />

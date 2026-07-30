@@ -1,89 +1,37 @@
 import { useState } from 'react'
-import {
-  getConceptCode,
-  type ConceptCodeId,
-  type ProgrammingLanguage,
-} from '../lib/codeExamples'
+import type { ConceptStep } from '../data/concepts'
+import type { ProgrammingLanguage } from '../lib/codeExamples'
 import { CodeSnippet } from './CodeSnippet'
 import { MathExpression } from './MathExpression'
 
-interface ConceptStep {
-  id: string
-  number: string
-  name: string
-  question: string
-  explanation: string
-  expression: string
-  expressionLabel: string
-  codeId: ConceptCodeId
-  unit: string
-  example: string
-  insight: string
-}
-
-const conceptSteps: ConceptStep[] = [
-  {
-    id: 'position',
-    number: '01',
-    name: 'Posición',
-    question: '¿Dónde está?',
-    explanation:
-      'La posición no dice cuánto has recorrido. Describe un punto respecto a un origen que elegimos como referencia.',
-    expression: 'x(t)',
-    expressionLabel: 'posición x en función del tiempo',
-    codeId: 'position',
-    unit: 'metros (m)',
-    example: 'x = −3 m significa tres metros a la izquierda del origen.',
-    insight: 'Es una variable de estado: una fotografía del sistema.',
-  },
-  {
-    id: 'velocity',
-    number: '02',
-    name: 'Velocidad',
-    question: '¿Cómo cambia su posición?',
-    explanation:
-      'La velocidad conecta el paso del tiempo con el cambio de posición. Su signo también conserva la dirección.',
-    expression: 'v=\\frac{\\Delta x}{\\Delta t}',
-    expressionLabel: 'velocidad es igual al cambio de posición dividido por el cambio de tiempo',
-    codeId: 'velocity',
-    unit: 'metros por segundo (m/s)',
-    example: 'v = 4 m/s suma cuatro metros de posición por cada segundo.',
-    insight: 'Es una tasa de cambio: cuánto cambia una variable por unidad de tiempo.',
-  },
-  {
-    id: 'acceleration',
-    number: '03',
-    name: 'Aceleración',
-    question: '¿Cómo cambia su velocidad?',
-    explanation:
-      'La aceleración no significa simplemente “ir rápido”. Mide cómo cambia la velocidad: su magnitud, su dirección o ambas.',
-    expression: 'a=\\frac{\\Delta v}{\\Delta t}',
-    expressionLabel: 'aceleración es igual al cambio de velocidad dividido por el cambio de tiempo',
-    codeId: 'acceleration',
-    unit: 'metros por segundo al cuadrado (m/s²)',
-    example: 'a = 2 m/s² añade 2 m/s a la velocidad cada segundo.',
-    insight: 'Es un cambio del cambio: una segunda capa de comportamiento.',
-  },
-]
-
 interface LearnWorkspaceProps {
+  steps: ConceptStep[]
+  getCode: (codeId: string, language: ProgrammingLanguage) => string
+  getFileName: (language: ProgrammingLanguage) => string
+  ariaLabel: string
+  translation: string
   programmingLanguage: ProgrammingLanguage
   onLanguageChange: (language: ProgrammingLanguage) => void
   onOpenLab: () => void
 }
 
 export function LearnWorkspace({
+  steps,
+  getCode,
+  getFileName,
+  ariaLabel,
+  translation,
   programmingLanguage,
   onLanguageChange,
   onOpenLab,
 }: LearnWorkspaceProps) {
   const [activeStepIndex, setActiveStepIndex] = useState(0)
-  const activeStep = conceptSteps[activeStepIndex]
+  const activeStep = steps[activeStepIndex]
 
   return (
-    <section className="learn-workspace" aria-label="Conceptos fundamentales">
+    <section className="learn-workspace" aria-label={ariaLabel}>
       <div className="concept-stepper" aria-label="Conceptos de la lección">
-        {conceptSteps.map((step, index) => (
+        {steps.map((step, index) => (
           <button
             key={step.id}
             type="button"
@@ -127,22 +75,23 @@ export function LearnWorkspace({
 
         <div className="concept-reader__code">
           <CodeSnippet
-            code={getConceptCode(activeStep.codeId, programmingLanguage)}
+            code={getCode(activeStep.codeId, programmingLanguage)}
             language={programmingLanguage}
             onLanguageChange={onLanguageChange}
+            fileName={getFileName(programmingLanguage)}
           />
           <div className="code-window__translation">
             <span aria-hidden="true">↳</span>
             <p>
               <strong>Traducción</strong>
-              El código conserva exactamente la misma relación entre estado, cambio y tiempo.
+              {translation}
             </p>
           </div>
         </div>
       </article>
 
       <div className="learn-actions">
-        <span>{activeStepIndex + 1} de {conceptSteps.length} conceptos</span>
+        <span>{activeStepIndex + 1} de {steps.length} conceptos</span>
         <div>
           <button
             className="app-button app-button--secondary"
@@ -152,7 +101,7 @@ export function LearnWorkspace({
           >
             Anterior
           </button>
-          {activeStepIndex < conceptSteps.length - 1 ? (
+          {activeStepIndex < steps.length - 1 ? (
             <button
               className="app-button app-button--primary"
               type="button"

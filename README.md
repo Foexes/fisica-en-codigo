@@ -6,7 +6,7 @@ académica con conceptos de programación.
 La interfaz y el contenido están escritos en español. La estructura interna,
 los componentes, tipos, funciones y variables usan nomenclatura en inglés.
 
-## Incluido en el prototipo 0.4
+## Incluido en el prototipo 0.5
 
 - Workspace de estudio con navegación persistente.
 - Tres modos: **Entender**, **Experimentar** y **Practicar**.
@@ -19,13 +19,16 @@ los componentes, tipos, funciones y variables usan nomenclatura en inglés.
 - Atajos de teclado `1`, `2` y `3` para cambiar de modo.
 - Diseño adaptable a escritorio y móvil.
 - PWA instalable con funcionamiento sin conexión y actualizaciones automáticas.
+- Segundo módulo completo de vectores: componentes, magnitud y dirección.
+- Laboratorio 2D con plano cartesiano, presets, normalización y código equivalente.
+- Progreso independiente por módulo con migración del progreso anterior.
 
 La preferencia de lenguaje se conserva localmente y se comparte entre el modo
 **Entender** y la pestaña de código del laboratorio.
 
 ## Ejecutar localmente
 
-Requiere Node.js.
+Requiere Node.js 22 o posterior.
 
 ```powershell
 npm install
@@ -65,6 +68,7 @@ el botón **Instalar app** aparecerá en la cabecera.
 ```text
 src/
 ├─ components/   Componentes visuales e interactivos
+├─ data/         Contenido de conceptos y ejercicios
 ├─ hooks/        Integración del navegador y la instalación PWA
 ├─ lib/          Lógica física independiente de React
 ├─ App.tsx       Composición de la primera lección
@@ -74,5 +78,5 @@ src/
 
 ## Siguiente etapa sugerida
 
-Convertir las lecciones y los problemas en datos independientes de la interfaz,
-para añadir vectores, funciones y fuerzas sin duplicar componentes.
+Construir el módulo de funciones sobre la navegación, práctica y progreso
+compartidos, manteniendo un laboratorio específico para sus gráficas.
