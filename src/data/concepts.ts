@@ -101,3 +101,48 @@ export const vectorConceptSteps: ConceptStep[] = [
     insight: 'atan2(y, x) es el patrón habitual para orientar cámaras, sprites y proyectiles.',
   },
 ]
+
+export const functionConceptSteps: ConceptStep[] = [
+  {
+    id: 'input-output',
+    number: '01',
+    name: 'Entrada y salida',
+    question: '¿Qué hace una función?',
+    explanation:
+      'Una función recibe una entrada, aplica siempre una regla definida y devuelve una única salida. La notación f(x) nombra tanto la regla como su resultado para x.',
+    expression: 'y=f(x)',
+    expressionLabel: 'y es el resultado de aplicar la función f a la entrada x',
+    codeId: 'input-output',
+    unit: 'x es entrada; f(x) es salida',
+    example: 'Si f(x) = 2x + 1, entonces f(3) = 7.',
+    insight: 'Es la misma idea que llamar doublePlusOne(3) y recibir 7.',
+  },
+  {
+    id: 'graph',
+    number: '02',
+    name: 'Gráfica',
+    question: '¿Cómo se ve la regla?',
+    explanation:
+      'Cada entrada x produce el punto (x, f(x)). Al representar muchas entradas aparece una gráfica que permite ver el comportamiento completo de la función.',
+    expression: '(x,f(x))',
+    expressionLabel: 'cada punto contiene una entrada x y su salida f de x',
+    codeId: 'graph',
+    unit: 'pares de coordenadas (x, y)',
+    example: 'Para f(x) = 2x + 1 aparecen los puntos (0, 1), (1, 3) y (2, 5).',
+    insight: 'Una tabla, una gráfica y una función de código son tres representaciones de la misma regla.',
+  },
+  {
+    id: 'slope',
+    number: '03',
+    name: 'Pendiente',
+    question: '¿Cuánto cambia la salida?',
+    explanation:
+      'En una función lineal, la pendiente m indica cuánto cambia la salida cuando la entrada aumenta una unidad. El término b fija la salida inicial cuando x vale cero.',
+    expression: 'f(x)=mx+b',
+    expressionLabel: 'f de x es igual a pendiente por x más intersección b',
+    codeId: 'slope',
+    unit: 'm: cambio; b: valor inicial',
+    example: 'En f(x) = 3x + 2, cada paso de x suma 3 a la salida y f(0) = 2.',
+    insight: 'La pendiente prepara la intuición para velocidad, tasas de cambio y derivadas.',
+  },
+]

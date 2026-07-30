@@ -32,7 +32,7 @@ export const courseModules: CourseModuleDefinition[] = [
     name: 'Funciones',
     lessonLabel: 'Funciones · Lección 03',
     title: 'Entradas, salidas y gráficas',
-    available: false,
+    available: true,
   },
   {
     id: 'forces',

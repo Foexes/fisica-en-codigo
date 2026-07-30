@@ -3,7 +3,8 @@ import type { MotionParameters } from './physics'
 export type ProgrammingLanguage = 'gdscript' | 'luau' | 'java' | 'python' | 'typescript'
 export type ConceptCodeId = 'position' | 'velocity' | 'acceleration'
 export type VectorConceptCodeId = 'components' | 'magnitude' | 'direction'
-export type ExampleModuleId = 'motion' | 'vectors'
+export type FunctionConceptCodeId = 'input-output' | 'graph' | 'slope'
+export type ExampleModuleId = 'motion' | 'vectors' | 'functions'
 
 export interface LanguageDefinition {
   id: ProgrammingLanguage
@@ -34,6 +35,13 @@ const exampleFileNames: Record<ExampleModuleId, Record<ProgrammingLanguage, stri
     java: 'VectorLab.java',
     python: 'vector_lab.py',
     typescript: 'vectorLab.ts',
+  },
+  functions: {
+    gdscript: 'function_lab.gd',
+    luau: 'FunctionLab.client.luau',
+    java: 'FunctionLab.java',
+    python: 'function_lab.py',
+    typescript: 'functionLab.ts',
   },
 }
 
@@ -170,6 +178,95 @@ console.log(angle) // 90`,
   },
 }
 
+const functionConceptCode: Record<
+  FunctionConceptCodeId,
+  Record<ProgrammingLanguage, string>
+> = {
+  'input-output': {
+    gdscript: `func double_plus_one(x: float) -> float:
+    return 2.0 * x + 1.0
+
+var output := double_plus_one(3.0) # 7.0`,
+    luau: `local function doublePlusOne(x: number): number
+    return 2 * x + 1
+end
+
+local output = doublePlusOne(3) -- 7`,
+    java: `double doublePlusOne(double x) {
+    return 2.0 * x + 1.0;
+}
+
+double output = doublePlusOne(3.0); // 7.0`,
+    python: `def double_plus_one(x: float) -> float:
+    return 2 * x + 1
+
+output = double_plus_one(3)  # 7`,
+    typescript: `function doublePlusOne(x: number): number {
+  return 2 * x + 1
+}
+
+const output = doublePlusOne(3) // 7`,
+  },
+  graph: {
+    gdscript: `func f(x: float) -> float:
+    return 2.0 * x + 1.0
+
+for x in range(3):
+    print(Vector2(x, f(x)))`,
+    luau: `local function f(x: number): number
+    return 2 * x + 1
+end
+
+for x = 0, 2 do
+    print(Vector2.new(x, f(x)))
+end`,
+    java: `double f(double x) {
+    return 2.0 * x + 1.0;
+}
+
+for (int x = 0; x <= 2; x++) {
+    System.out.printf("(%d, %.0f)%n", x, f(x));
+}`,
+    python: `def f(x: float) -> float:
+    return 2 * x + 1
+
+points = [(x, f(x)) for x in range(3)]
+print(points)`,
+    typescript: `const f = (x: number) => 2 * x + 1
+const points = [0, 1, 2].map(x => ({ x, y: f(x) }))
+
+console.log(points)`,
+  },
+  slope: {
+    gdscript: `var slope := 3.0
+var initial_value := 2.0
+
+func f(x: float) -> float:
+    return slope * x + initial_value`,
+    luau: `local slope = 3
+local initialValue = 2
+
+local function f(x: number): number
+    return slope * x + initialValue
+end`,
+    java: `double slope = 3.0;
+double initialValue = 2.0;
+
+double f(double x) {
+    return slope * x + initialValue;
+}`,
+    python: `slope = 3
+initial_value = 2
+
+def f(x: float) -> float:
+    return slope * x + initial_value`,
+    typescript: `const slope = 3
+const initialValue = 2
+
+const f = (x: number) => slope * x + initialValue`,
+  },
+}
+
 export function getLanguageDefinition(language: ProgrammingLanguage): LanguageDefinition {
   return programmingLanguages.find((definition) => definition.id === language) ?? programmingLanguages[0]
 }
@@ -186,6 +283,13 @@ export function getVectorConceptCode(
   language: ProgrammingLanguage,
 ): string {
   return vectorConceptCode[conceptId][language]
+}
+
+export function getFunctionConceptCode(
+  conceptId: FunctionConceptCodeId,
+  language: ProgrammingLanguage,
+): string {
+  return functionConceptCode[conceptId][language]
 }
 
 export function getExampleFileName(
@@ -301,6 +405,65 @@ const direction = speed > 0
   : { x: 0, y: 0 }
 
 console.log({ speed, direction })`,
+  }
+
+  return examples[language]
+}
+
+export function getFunctionLabCode(
+  language: ProgrammingLanguage,
+  slopeValue: number,
+  interceptValue: number,
+  inputValue: number,
+): string {
+  const slope = slopeValue.toFixed(2)
+  const intercept = interceptValue.toFixed(2)
+  const input = inputValue.toFixed(2)
+
+  const examples: Record<ProgrammingLanguage, string> = {
+    gdscript: `var slope := ${slope}
+var intercept := ${intercept}
+
+func f(x: float) -> float:
+    return slope * x + intercept
+
+var output := f(${input})
+print(output)`,
+    luau: `local slope = ${slope}
+local intercept = ${intercept}
+
+local function f(x: number): number
+    return slope * x + intercept
+end
+
+local output = f(${input})
+print(output)`,
+    java: `double slope = ${slope};
+double intercept = ${intercept};
+
+double f(double x) {
+    return slope * x + intercept;
+}
+
+double output = f(${input});
+System.out.println(output);`,
+    python: `slope = ${slope}
+intercept = ${intercept}
+
+def f(x: float) -> float:
+    return slope * x + intercept
+
+output = f(${input})
+print(output)`,
+    typescript: `const slope = ${slope}
+const intercept = ${intercept}
+
+function f(x: number): number {
+  return slope * x + intercept
+}
+
+const output = f(${input})
+console.log(output)`,
   }
 
   return examples[language]

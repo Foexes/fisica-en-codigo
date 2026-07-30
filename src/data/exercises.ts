@@ -133,6 +133,60 @@ const vectorExercises: Exercise[] = [
   },
 ]
 
+const functionExercises: Exercise[] = [
+  {
+    id: 'function-evaluation',
+    title: 'Ejecutar la regla',
+    skill: 'Evaluar una función',
+    prompt:
+      'La función f(x) = 2x + 3 recibe la entrada x = 4. ¿Qué salida produce?',
+    givenValues: [
+      { symbol: 'f(x)', value: '2x + 3' },
+      { symbol: 'x', value: '4' },
+    ],
+    expression: 'f(4)=2(4)+3',
+    expressionLabel: 'f de cuatro es igual a dos por cuatro más tres',
+    answer: 11,
+    unit: '',
+    hint: 'Sustituye cada aparición de x por 4 y respeta primero la multiplicación.',
+    success: 'f(4) = 2 × 4 + 3 = 11. Evaluar una función equivale a llamar código con un argumento.',
+  },
+  {
+    id: 'function-intercept',
+    title: 'Salida inicial',
+    skill: 'Identificar la intersección',
+    prompt:
+      'Para g(x) = −3x + 5, ¿cuál es la salida cuando la entrada vale cero?',
+    givenValues: [
+      { symbol: 'g(x)', value: '−3x + 5' },
+      { symbol: 'x', value: '0' },
+    ],
+    expression: 'g(0)=-3(0)+5',
+    expressionLabel: 'g de cero es igual a menos tres por cero más cinco',
+    answer: 5,
+    unit: '',
+    hint: 'El término multiplicado por x desaparece cuando x = 0. Queda únicamente b.',
+    success: 'g(0) = 5. En una función lineal, b es la intersección con el eje Y y la salida inicial.',
+  },
+  {
+    id: 'function-slope',
+    title: 'Cambio entre puntos',
+    skill: 'Calcular pendiente',
+    prompt:
+      'Una recta pasa por los puntos (1, 3) y (4, 9). ¿Cuál es su pendiente?',
+    givenValues: [
+      { symbol: '(x₁, y₁)', value: '(1, 3)' },
+      { symbol: '(x₂, y₂)', value: '(4, 9)' },
+    ],
+    expression: 'm=\\frac{y_2-y_1}{x_2-x_1}',
+    expressionLabel: 'pendiente es cambio de y dividido por cambio de x',
+    answer: 2,
+    unit: '',
+    hint: 'La salida cambia 9 − 3 = 6 mientras la entrada cambia 4 − 1 = 3.',
+    success: 'm = 6 / 3 = 2. Por cada unidad que avanza x, la salida aumenta dos.',
+  },
+]
+
 export const exerciseSets: Partial<Record<CourseModuleId, ExerciseSet>> = {
   motion: {
     title: 'Tres problemas, una misma idea',
@@ -143,5 +197,10 @@ export const exerciseSets: Partial<Record<CourseModuleId, ExerciseSet>> = {
     title: 'Componentes que construyen una dirección',
     description: 'Resuelve primero por ejes; combina las componentes al final.',
     exercises: vectorExercises,
+  },
+  functions: {
+    title: 'Una regla, tres representaciones',
+    description: 'Conecta cada fórmula con su entrada, su salida y su gráfica.',
+    exercises: functionExercises,
   },
 }

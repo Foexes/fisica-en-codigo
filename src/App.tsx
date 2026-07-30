@@ -2,23 +2,20 @@ import { useEffect, useState } from 'react'
 import { LabWorkspace } from './components/LabWorkspace'
 import { LearnWorkspace } from './components/LearnWorkspace'
 import { ExercisePanel } from './components/ExercisePanel'
+import { FunctionLabWorkspace } from './components/FunctionLabWorkspace'
 import { VectorLabWorkspace } from './components/VectorLabWorkspace'
-import { motionConceptSteps, vectorConceptSteps } from './data/concepts'
 import { exerciseSets } from './data/exercises'
 import {
-  getConceptCode,
   getExampleFileName,
-  getVectorConceptCode,
   programmingLanguages,
-  type ConceptCodeId,
   type ProgrammingLanguage,
-  type VectorConceptCodeId,
 } from './lib/codeExamples'
 import {
   courseModules,
   getCourseModule,
   type CourseModuleId,
 } from './lib/course'
+import { getModuleContent } from './lib/moduleContent'
 import { usePwaInstall } from './hooks/usePwaInstall'
 
 type StudyMode = 'learn' | 'lab' | 'practice'
@@ -57,10 +54,24 @@ const legacyProgressStorageKey = 'physics-in-code:completed-exercises'
 const moduleProgressStorageKey = 'physics-in-code:module-progress'
 const languageStorageKey = 'physics-in-code:programming-language'
 
+function sanitizeModuleProgress(value: unknown): ModuleProgress {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+
+  return courseModules.reduce<ModuleProgress>((progress, courseModule) => {
+    const storedIds = (value as Record<string, unknown>)[courseModule.id]
+    if (!Array.isArray(storedIds)) return progress
+
+    progress[courseModule.id] = storedIds.filter(
+      (storedId): storedId is string => typeof storedId === 'string',
+    )
+    return progress
+  }, {})
+}
+
 function readModuleProgress(): ModuleProgress {
   try {
     const storedProgress = localStorage.getItem(moduleProgressStorageKey)
-    if (storedProgress) return JSON.parse(storedProgress) as ModuleProgress
+    if (storedProgress) return sanitizeModuleProgress(JSON.parse(storedProgress))
 
     const legacyProgress = localStorage.getItem(legacyProgressStorageKey)
     if (!legacyProgress) return {}
@@ -91,6 +102,7 @@ export function App() {
   const [moduleProgress, setModuleProgress] = useState<ModuleProgress>(readModuleProgress)
 
   const activeModule = getCourseModule(activeModuleId)
+  const activeModuleContent = getModuleContent(activeModuleId)
   const activeModeItem = studyModes.find((mode) => mode.id === activeMode) ?? studyModes[0]
   const activeExerciseSet = exerciseSets[activeModuleId] ?? exerciseSets.motion
   const completedExerciseIds = moduleProgress[activeModuleId] ?? []
@@ -99,9 +111,6 @@ export function App() {
   const lessonProgress = activeExerciseSet
     ? Math.round((completedExerciseCount / activeExerciseSet.exercises.length) * 100)
     : 0
-  const activeConceptSteps =
-    activeModuleId === 'vectors' ? vectorConceptSteps : motionConceptSteps
-
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null
@@ -158,14 +167,6 @@ export function App() {
     setIsNavigationOpen(false)
   }
 
-  const getActiveConceptCode = (codeId: string, language: ProgrammingLanguage) => {
-    if (activeModuleId === 'vectors') {
-      return getVectorConceptCode(codeId as VectorConceptCodeId, language)
-    }
-
-    return getConceptCode(codeId as ConceptCodeId, language)
-  }
-
   return (
     <div className="app-frame">
       <header className="app-header">
@@ -183,7 +184,7 @@ export function App() {
         <a className="app-brand" href="#workspace" aria-label="Física en Código, inicio">
           <span className="app-brand__symbol" aria-hidden="true">ƒ</span>
           <span className="app-brand__name">Física <b>en Código</b></span>
-          <span className="prototype-tag">α 0.5</span>
+          <span className="prototype-tag">α 0.6</span>
         </a>
 
         <div className="header-context" aria-label="Contexto actual">
@@ -313,17 +314,13 @@ export function App() {
         {activeMode === 'learn' && (
           <LearnWorkspace
             key={activeModuleId}
-            steps={activeConceptSteps}
-            getCode={getActiveConceptCode}
+            steps={activeModuleContent.concepts}
+            getCode={activeModuleContent.getConceptCode}
             getFileName={(language) =>
-              getExampleFileName(activeModuleId === 'vectors' ? 'vectors' : 'motion', language)
+              getExampleFileName(activeModuleContent.exampleModuleId, language)
             }
             ariaLabel={`Conceptos fundamentales de ${activeModule.name.toLowerCase()}`}
-            translation={
-              activeModuleId === 'vectors'
-                ? 'El código utiliza las mismas componentes, magnitud y dirección que aparecen en la fórmula.'
-                : 'El código conserva exactamente la misma relación entre estado, cambio y tiempo.'
-            }
+            translation={activeModuleContent.translation}
             programmingLanguage={programmingLanguage}
             onLanguageChange={setProgrammingLanguage}
             onOpenLab={() => selectMode('lab')}
@@ -337,6 +334,12 @@ export function App() {
         )}
         {activeMode === 'lab' && activeModuleId === 'vectors' && (
           <VectorLabWorkspace
+            programmingLanguage={programmingLanguage}
+            onLanguageChange={setProgrammingLanguage}
+          />
+        )}
+        {activeMode === 'lab' && activeModuleId === 'functions' && (
+          <FunctionLabWorkspace
             programmingLanguage={programmingLanguage}
             onLanguageChange={setProgrammingLanguage}
           />

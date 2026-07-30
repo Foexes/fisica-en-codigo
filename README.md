@@ -6,7 +6,7 @@ académica con conceptos de programación.
 La interfaz y el contenido están escritos en español. La estructura interna,
 los componentes, tipos, funciones y variables usan nomenclatura en inglés.
 
-## Incluido en el prototipo 0.5
+## Incluido en el prototipo 0.6
 
 - Workspace de estudio con navegación persistente.
 - Tres modos: **Entender**, **Experimentar** y **Practicar**.
@@ -22,6 +22,9 @@ los componentes, tipos, funciones y variables usan nomenclatura en inglés.
 - Segundo módulo completo de vectores: componentes, magnitud y dirección.
 - Laboratorio 2D con plano cartesiano, presets, normalización y código equivalente.
 - Progreso independiente por módulo con migración del progreso anterior.
+- Tercer módulo completo de funciones: entrada/salida, gráficas y pendiente.
+- Laboratorio de funciones lineales con evaluación, tabla de valores y código en vivo.
+- Registro modular de contenido para añadir nuevas lecciones sin condicionales crecientes.
 
 La preferencia de lenguaje se conserva localmente y se comparte entre el modo
 **Entender** y la pestaña de código del laboratorio.
@@ -71,12 +74,12 @@ src/
 ├─ data/         Contenido de conceptos y ejercicios
 ├─ hooks/        Integración del navegador y la instalación PWA
 ├─ lib/          Lógica física independiente de React
-├─ App.tsx       Composición de la primera lección
+├─ App.tsx       Composición del curso y sus modos
 ├─ main.tsx      Punto de entrada
 └─ styles.css    Sistema visual y diseño adaptable
 ```
 
 ## Siguiente etapa sugerida
 
-Construir el módulo de funciones sobre la navegación, práctica y progreso
-compartidos, manteniendo un laboratorio específico para sus gráficas.
+Construir el módulo de fuerzas conectando diagramas, fuerza neta y la segunda
+ley de Newton con el movimiento ya estudiado.
