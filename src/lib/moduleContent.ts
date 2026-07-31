@@ -1,4 +1,5 @@
 import {
+  forceConceptSteps,
   functionConceptSteps,
   motionConceptSteps,
   vectorConceptSteps,
@@ -6,10 +7,12 @@ import {
 } from '../data/concepts'
 import {
   getConceptCode,
+  getForceConceptCode,
   getFunctionConceptCode,
   getVectorConceptCode,
   type ConceptCodeId,
   type ExampleModuleId,
+  type ForceConceptCodeId,
   type FunctionConceptCodeId,
   type ProgrammingLanguage,
   type VectorConceptCodeId,
@@ -46,6 +49,14 @@ export const moduleContent: Partial<Record<CourseModuleId, CourseModuleContent>>
       'La llamada de código recibe la misma entrada x y devuelve exactamente la salida f(x).',
     getConceptCode: (codeId, language) =>
       getFunctionConceptCode(codeId as FunctionConceptCodeId, language),
+  },
+  forces: {
+    concepts: forceConceptSteps,
+    exampleModuleId: 'forces',
+    translation:
+      'El código suma las fuerzas, divide la resultante entre la masa y reutiliza el mismo update de velocidad.',
+    getConceptCode: (codeId, language) =>
+      getForceConceptCode(codeId as ForceConceptCodeId, language),
   },
 }
 

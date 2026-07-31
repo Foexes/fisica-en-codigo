@@ -4,7 +4,8 @@ export type ProgrammingLanguage = 'gdscript' | 'luau' | 'java' | 'python' | 'typ
 export type ConceptCodeId = 'position' | 'velocity' | 'acceleration'
 export type VectorConceptCodeId = 'components' | 'magnitude' | 'direction'
 export type FunctionConceptCodeId = 'input-output' | 'graph' | 'slope'
-export type ExampleModuleId = 'motion' | 'vectors' | 'functions'
+export type ForceConceptCodeId = 'force' | 'net-force' | 'second-law'
+export type ExampleModuleId = 'motion' | 'vectors' | 'functions' | 'forces'
 
 export interface LanguageDefinition {
   id: ProgrammingLanguage
@@ -42,6 +43,13 @@ const exampleFileNames: Record<ExampleModuleId, Record<ProgrammingLanguage, stri
     java: 'FunctionLab.java',
     python: 'function_lab.py',
     typescript: 'functionLab.ts',
+  },
+  forces: {
+    gdscript: 'force_lab.gd',
+    luau: 'ForceLab.client.luau',
+    java: 'ForceLab.java',
+    python: 'force_lab.py',
+    typescript: 'forceLab.ts',
   },
 }
 
@@ -267,6 +275,89 @@ const f = (x: number) => slope * x + initialValue`,
   },
 }
 
+const forceConceptCode: Record<
+  ForceConceptCodeId,
+  Record<ProgrammingLanguage, string>
+> = {
+  force: {
+    gdscript: `var applied_force := Vector2(10.0, 0.0)
+
+print(applied_force.length()) # 10 N`,
+    luau: `local appliedForce = Vector2.new(10, 0)
+
+print(appliedForce.Magnitude) -- 10 N`,
+    java: `double forceX = 10.0;
+double forceY = 0.0;
+double magnitude = Math.hypot(forceX, forceY);
+
+System.out.println(magnitude); // 10 N`,
+    python: `from math import hypot
+
+applied_force = (10.0, 0.0)
+magnitude = hypot(*applied_force)
+
+print(magnitude)  # 10 N`,
+    typescript: `const appliedForce = { x: 10, y: 0 }
+const magnitude = Math.hypot(appliedForce.x, appliedForce.y)
+
+console.log(magnitude) // 10 N`,
+  },
+  'net-force': {
+    gdscript: `var push_force := 18.0
+var resistance_force := -6.0
+var net_force := push_force + resistance_force
+
+print(net_force) # 12 N`,
+    luau: `local pushForce = 18
+local resistanceForce = -6
+local netForce = pushForce + resistanceForce
+
+print(netForce) -- 12 N`,
+    java: `double pushForce = 18.0;
+double resistanceForce = -6.0;
+double netForce = pushForce + resistanceForce;
+
+System.out.println(netForce); // 12 N`,
+    python: `push_force = 18.0
+resistance_force = -6.0
+net_force = push_force + resistance_force
+
+print(net_force)  # 12 N`,
+    typescript: `const pushForce = 18
+const resistanceForce = -6
+const netForce = pushForce + resistanceForce
+
+console.log(netForce) // 12 N`,
+  },
+  'second-law': {
+    gdscript: `var net_force := 12.0
+var mass := 4.0
+var acceleration := net_force / mass
+
+print(acceleration) # 3 m/s²`,
+    luau: `local netForce = 12
+local mass = 4
+local acceleration = netForce / mass
+
+print(acceleration) -- 3 m/s²`,
+    java: `double netForce = 12.0;
+double mass = 4.0;
+double acceleration = netForce / mass;
+
+System.out.println(acceleration); // 3 m/s²`,
+    python: `net_force = 12.0
+mass = 4.0
+acceleration = net_force / mass
+
+print(acceleration)  # 3 m/s²`,
+    typescript: `const netForce = 12
+const mass = 4
+const acceleration = netForce / mass
+
+console.log(acceleration) // 3 m/s²`,
+  },
+}
+
 export function getLanguageDefinition(language: ProgrammingLanguage): LanguageDefinition {
   return programmingLanguages.find((definition) => definition.id === language) ?? programmingLanguages[0]
 }
@@ -290,6 +381,13 @@ export function getFunctionConceptCode(
   language: ProgrammingLanguage,
 ): string {
   return functionConceptCode[conceptId][language]
+}
+
+export function getForceConceptCode(
+  conceptId: ForceConceptCodeId,
+  language: ProgrammingLanguage,
+): string {
+  return forceConceptCode[conceptId][language]
 }
 
 export function getExampleFileName(
@@ -464,6 +562,72 @@ function f(x: number): number {
 
 const output = f(${input})
 console.log(output)`,
+  }
+
+  return examples[language]
+}
+
+export function getForceLabCode(
+  language: ProgrammingLanguage,
+  appliedForceValue: number,
+  resistanceForceValue: number,
+  massValue: number,
+): string {
+  const appliedForce = appliedForceValue.toFixed(1)
+  const resistanceForce = resistanceForceValue.toFixed(1)
+  const mass = massValue.toFixed(1)
+
+  const examples: Record<ProgrammingLanguage, string> = {
+    gdscript: `var applied_force := ${appliedForce}
+var resistance_force := ${resistanceForce}
+var mass := ${mass}
+var velocity := 0.0
+
+func _physics_process(delta: float) -> void:
+    var net_force := applied_force - resistance_force
+    var acceleration := net_force / mass
+    velocity += acceleration * delta`,
+    luau: `local RunService = game:GetService("RunService")
+local appliedForce = ${appliedForce}
+local resistanceForce = ${resistanceForce}
+local mass = ${mass}
+local velocity = 0
+
+RunService.Heartbeat:Connect(function(deltaTime)
+    local netForce = appliedForce - resistanceForce
+    local acceleration = netForce / mass
+    velocity += acceleration * deltaTime
+end)`,
+    java: `double appliedForce = ${appliedForce};
+double resistanceForce = ${resistanceForce};
+double mass = ${mass};
+double velocity = 0.0;
+
+void physicsStep(double deltaTime) {
+    double netForce = appliedForce - resistanceForce;
+    double acceleration = netForce / mass;
+    velocity += acceleration * deltaTime;
+}`,
+    python: `applied_force = ${appliedForce}
+resistance_force = ${resistanceForce}
+mass = ${mass}
+velocity = 0.0
+
+def physics_step(delta_time: float) -> None:
+    global velocity
+    net_force = applied_force - resistance_force
+    acceleration = net_force / mass
+    velocity += acceleration * delta_time`,
+    typescript: `const appliedForce = ${appliedForce}
+const resistanceForce = ${resistanceForce}
+const mass = ${mass}
+let velocity = 0
+
+function physicsStep(deltaTime: number) {
+  const netForce = appliedForce - resistanceForce
+  const acceleration = netForce / mass
+  velocity += acceleration * deltaTime
+}`,
   }
 
   return examples[language]

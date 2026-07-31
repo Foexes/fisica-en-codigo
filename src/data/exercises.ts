@@ -187,6 +187,60 @@ const functionExercises: Exercise[] = [
   },
 ]
 
+const forceExercises: Exercise[] = [
+  {
+    id: 'force-resultant',
+    title: 'Empujes opuestos',
+    skill: 'Calcular fuerza neta',
+    prompt:
+      'Un robot recibe 18 N hacia la derecha y una resistencia de 6 N hacia la izquierda. ¿Cuál es su fuerza neta horizontal?',
+    givenValues: [
+      { symbol: 'F→', value: '18 N' },
+      { symbol: 'F←', value: '6 N' },
+    ],
+    expression: 'F_{net}=F_{\\rightarrow}-F_{\\leftarrow}',
+    expressionLabel: 'fuerza neta es fuerza derecha menos fuerza izquierda',
+    answer: 12,
+    unit: 'N',
+    hint: 'Elige la derecha como signo positivo. La fuerza opuesta entra con signo negativo.',
+    success: 'Fnet = 18 − 6 = +12 N. El signo positivo indica que la resultante apunta a la derecha.',
+  },
+  {
+    id: 'force-acceleration',
+    title: 'Acelerar una caja',
+    skill: 'Aplicar la segunda ley',
+    prompt:
+      'Una caja de 6 kg recibe una fuerza neta de 24 N. ¿Qué aceleración produce?',
+    givenValues: [
+      { symbol: 'Fnet', value: '24 N' },
+      { symbol: 'm', value: '6 kg' },
+    ],
+    expression: 'a=\\frac{F_{net}}{m}',
+    expressionLabel: 'aceleración es fuerza neta dividida por masa',
+    answer: 4,
+    unit: 'm/s²',
+    hint: 'Despeja la aceleración dividiendo la fuerza neta entre la masa.',
+    success: 'a = 24 / 6 = 4 m/s². Cada segundo, la velocidad cambia 4 m/s.',
+  },
+  {
+    id: 'force-mass',
+    title: 'Descubrir la masa',
+    skill: 'Despejar masa',
+    prompt:
+      'Una fuerza neta de 18 N produce una aceleración de 3 m/s². ¿Cuál es la masa del objeto?',
+    givenValues: [
+      { symbol: 'Fnet', value: '18 N' },
+      { symbol: 'a', value: '3 m/s²' },
+    ],
+    expression: 'm=\\frac{F_{net}}{a}',
+    expressionLabel: 'masa es fuerza neta dividida por aceleración',
+    answer: 6,
+    unit: 'kg',
+    hint: 'Reordena F = ma para dejar m sola: divide ambos lados entre a.',
+    success: 'm = 18 / 3 = 6 kg. Has usado la misma relación, pero despejando otra variable.',
+  },
+]
+
 export const exerciseSets: Partial<Record<CourseModuleId, ExerciseSet>> = {
   motion: {
     title: 'Tres problemas, una misma idea',
@@ -202,5 +256,10 @@ export const exerciseSets: Partial<Record<CourseModuleId, ExerciseSet>> = {
     title: 'Una regla, tres representaciones',
     description: 'Conecta cada fórmula con su entrada, su salida y su gráfica.',
     exercises: functionExercises,
+  },
+  forces: {
+    title: 'Interacciones que cambian la velocidad',
+    description: 'Suma primero las fuerzas; aplica la masa después.',
+    exercises: forceExercises,
   },
 }

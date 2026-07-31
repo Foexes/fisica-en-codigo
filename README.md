@@ -6,7 +6,7 @@ académica con conceptos de programación.
 La interfaz y el contenido están escritos en español. La estructura interna,
 los componentes, tipos, funciones y variables usan nomenclatura en inglés.
 
-## Incluido en el prototipo 0.6
+## Incluido en el prototipo 0.7
 
 - Workspace de estudio con navegación persistente.
 - Tres modos: **Entender**, **Experimentar** y **Practicar**.
@@ -25,6 +25,8 @@ los componentes, tipos, funciones y variables usan nomenclatura en inglés.
 - Tercer módulo completo de funciones: entrada/salida, gráficas y pendiente.
 - Laboratorio de funciones lineales con evaluación, tabla de valores y código en vivo.
 - Registro modular de contenido para añadir nuevas lecciones sin condicionales crecientes.
+- Cuarto módulo completo de fuerzas: interacciones, fuerza neta y segunda ley de Newton.
+- Diagrama de cuerpo libre con fuerzas horizontales, peso, normal y aceleración resultante.
 
 La preferencia de lenguaje se conserva localmente y se comparte entre el modo
 **Entender** y la pestaña de código del laboratorio.
@@ -81,5 +83,5 @@ src/
 
 ## Siguiente etapa sugerida
 
-Construir el módulo de fuerzas conectando diagramas, fuerza neta y la segunda
-ley de Newton con el movimiento ya estudiado.
+Consolidar el primer bloque con una vista general de progreso y decidir el
+siguiente recorrido: álgebra/trigonometría o límites/derivadas.

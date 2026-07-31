@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { LabWorkspace } from './components/LabWorkspace'
 import { LearnWorkspace } from './components/LearnWorkspace'
 import { ExercisePanel } from './components/ExercisePanel'
+import { ForceLabWorkspace } from './components/ForceLabWorkspace'
 import { FunctionLabWorkspace } from './components/FunctionLabWorkspace'
 import { VectorLabWorkspace } from './components/VectorLabWorkspace'
 import { exerciseSets } from './data/exercises'
@@ -184,7 +185,7 @@ export function App() {
         <a className="app-brand" href="#workspace" aria-label="Física en Código, inicio">
           <span className="app-brand__symbol" aria-hidden="true">ƒ</span>
           <span className="app-brand__name">Física <b>en Código</b></span>
-          <span className="prototype-tag">α 0.6</span>
+          <span className="prototype-tag">α 0.7</span>
         </a>
 
         <div className="header-context" aria-label="Contexto actual">
@@ -340,6 +341,12 @@ export function App() {
         )}
         {activeMode === 'lab' && activeModuleId === 'functions' && (
           <FunctionLabWorkspace
+            programmingLanguage={programmingLanguage}
+            onLanguageChange={setProgrammingLanguage}
+          />
+        )}
+        {activeMode === 'lab' && activeModuleId === 'forces' && (
+          <ForceLabWorkspace
             programmingLanguage={programmingLanguage}
             onLanguageChange={setProgrammingLanguage}
           />

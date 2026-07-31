@@ -40,7 +40,7 @@ export const courseModules: CourseModuleDefinition[] = [
     name: 'Fuerzas',
     lessonLabel: 'Fuerzas · Lección 04',
     title: 'Interacciones y movimiento',
-    available: false,
+    available: true,
   },
 ]
 

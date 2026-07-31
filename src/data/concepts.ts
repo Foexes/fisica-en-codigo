@@ -146,3 +146,48 @@ export const functionConceptSteps: ConceptStep[] = [
     insight: 'La pendiente prepara la intuición para velocidad, tasas de cambio y derivadas.',
   },
 ]
+
+export const forceConceptSteps: ConceptStep[] = [
+  {
+    id: 'force',
+    number: '01',
+    name: 'Fuerza',
+    question: '¿Qué intenta cambiar el movimiento?',
+    explanation:
+      'Una fuerza representa una interacción: un empuje o un tirón con magnitud y dirección. Por eso se comporta como un vector y se mide en newtons.',
+    expression: '\\vec{F}=m\\vec{a}',
+    expressionLabel: 'fuerza vectorial es igual a masa por aceleración vectorial',
+    codeId: 'force',
+    unit: 'newton (N) = kg·m/s²',
+    example: 'Una fuerza de +10 N empuja hacia la derecha; −10 N lo hace hacia la izquierda.',
+    insight: 'En código suele ser un Vector2 o Vector3; en un solo eje basta con conservar el signo.',
+  },
+  {
+    id: 'net-force',
+    number: '02',
+    name: 'Fuerza neta',
+    question: '¿Qué queda al combinar todas?',
+    explanation:
+      'Un objeto puede recibir varias fuerzas al mismo tiempo. La fuerza neta es su suma vectorial y es la que determina si la velocidad cambia.',
+    expression: '\\vec{F}_{net}=\\sum_i\\vec{F}_i',
+    expressionLabel: 'fuerza neta es igual a la suma de todas las fuerzas',
+    codeId: 'net-force',
+    unit: 'newtons (N)',
+    example: '18 N a la derecha y 6 N a la izquierda producen una fuerza neta de +12 N.',
+    insight: 'Fuerza neta cero significa aceleración cero. El objeto todavía puede conservar una velocidad constante.',
+  },
+  {
+    id: 'second-law',
+    number: '03',
+    name: 'Segunda ley',
+    question: '¿Cuánto cambia la velocidad?',
+    explanation:
+      'La misma fuerza produce más aceleración sobre menos masa. La masa mide la resistencia del objeto a cambiar su velocidad: su inercia.',
+    expression: '\\vec{a}=\\frac{\\vec{F}_{net}}{m}',
+    expressionLabel: 'aceleración es igual a fuerza neta dividida por masa',
+    codeId: 'second-law',
+    unit: 'metros por segundo al cuadrado (m/s²)',
+    example: 'Una fuerza neta de 12 N sobre 4 kg produce 3 m/s².',
+    insight: 'Después de calcular a, el bucle conocido sigue igual: velocity += acceleration * delta.',
+  },
+]
